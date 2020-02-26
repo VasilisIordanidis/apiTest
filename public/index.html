@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <meta charset = "utf-8">
+        <title>myApi front-end</title>
+        <link href="https://fonts.googleapis.com/css?family=Trade+Winds&display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <h1 class="title">Judo API</h1>
+        <div id="homepage">
+            <h1>Check for a Judoka</h1>
+            <div id="judoka"></div>
+        </div>
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+        <script src="https://unpkg.com/react@15/dist/react.js"></script>
+        <script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
+        <!--create react component -->
+        <script type="text/babel">
+            var Judoka = React.createClass({
+                getInitialState:function(){
+                    return({
+                        judokas:[]
+                    });
+                },
+                render: function(){
+                    
+                    var judokas = this.state.judokas;
+                    judokas = judokas.map(function(judoka,index){
+                        return(
+                            <li key={index}>
+                                <span className="firstName">{judoka.firstName}</span>
+                                <span className="lastName">{judoka.lastName}</span>
+                                <span className="country">{judoka.country}</span>
+                            </li>
+                        )
+                    });
+                    //edw den mpainei an t gamhsw 
+                    return (
+                        <div id="judoka-container">
+                            <form id="search" onSubmit={this.handleSubmit}>
+                                <label>Enter Judokas Last Name :</label>
+                                <input type="text" ref="lastName" placeholder="last name" required />
+                                <input type="submit" value="Find Judoka"/>
+                            </form>
+                            <ul>{judokas}</ul>
+                        </div>
+                    );
+                },
+                handleSubmit:function(e){
+                    e.preventDefault();
+                    var lastName = this.refs.lastName.value;
+                    fetch('/judokas/'+lastName).then(function(data){
+                        console.log(data.json);
+                        return data.json();
+                    }).then(json => {
+                        this.setState({
+                            judokas : [json]
+                        });
+                    });
+                }
+                
+            });
+            ReactDOM.render(<Judoka />,document.getElementById("judoka"));
+        </script>
+    </body>
+</html>
